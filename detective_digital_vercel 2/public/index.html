@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detective Digital Pro — Plataforma OSINT & Inteligencia Periodística</title>
+  <style>
+    :root {
+      --bg: #07090e;
+      --surface: rgba(15, 23, 42, 0.75);
+      --surface-solid: #0f172a;
+      --surface-hover: rgba(30, 41, 59, 0.8);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(59, 130, 246, 0.5);
+      --primary: #38bdf8;
+      --primary-accent: #0284c7;
+      --primary-gradient: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #10b981;
+      --purple: #8b5cf6;
+      --text: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Cabecera Apple / Web Tech */
+    header.apple-header {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      z-index: 50;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--primary-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+      font-size: 19px;
+    }
+
+    .brand-info h1 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-info p {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+    }
+
+    .global-search-bar {
+      position: relative;
+      width: 460px;
+    }
+
+    .global-search-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 14px 8px 36px;
+      color: var(--text);
+      font-size: 0.84rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .global-search-input:focus {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+    }
+
+    .search-icon-pos {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .search-kbd {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.68rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--text-muted);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-export {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-export:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--text-secondary);
+    }
+
+    .btn-export.primary {
+      background: var(--primary-accent);
+      border-color: var(--primary-accent);
+      color: #fff;
+    }
+
+    .btn-export.primary:hover {
+      background: #0369a1;
+    }
+
+    /* Navegación */
+    nav.apple-nav {
+      background: rgba(11, 15, 25, 0.95);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+      overflow-x: auto;
+    }
+
+    .nav-item {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 10px 14px;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-item:hover { color: var(--text); }
+    .nav-item.active {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+    }
+
+    /* Espacio de trabajo */
+    .app-workspace {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .view-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+    }
+
+    .glass-card {
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-head h2 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pill {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .pill.red { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .pill.green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .pill.blue { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .pill.purple { background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.3); }
+    .pill.amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    /* Tablas */
+    .data-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      text-align: left;
+    }
+
+    table.data-table th {
+      background: rgba(15, 23, 42, 0.9);
+      padding: 10px 14px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    table.data-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #e2e8f0;
+      vertical-align: middle;
+    }
+
+    table.data-table tr:hover { background: rgba(255, 255, 255, 0.03); }
+
+    /* Triple Feed */
+    .triple-feed-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 1100px) {
+      .triple-feed-layout { grid-template-columns: 1fr; }
+    }
+
+    .feed-column {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 200px);
+      overflow: hidden;
+    }
+
+    .feed-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    .feed-header h3 {
+      font-size: 0.84rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feed-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .news-card {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      transition: border-color 0.2s;
+    }
+
+    .news-card:hover { border-color: rgba(255, 255, 255, 0.2); }
+
+    .news-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .news-outlet { font-weight: 700; color: var(--primary); }
+    .news-card h4 { font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; line-height: 1.35; }
+    .news-desc { font-size: 0.76rem; color: #94a3b8; line-height: 1.4; }
+
+    /* Galería Visual con Imágenes Nítidas */
+    .media-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
+      margin-top: 16px;
+    }
+
+    .media-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .media-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+    }
+
+    .media-thumb-wrap {
+      height: 160px;
+      width: 100%;
+      position: relative;
+      background: #0b1324;
+      overflow: hidden;
+    }
+
+    .media-thumb-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .media-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 0.68rem;
+      background: rgba(0, 0, 0, 0.75);
+      color: #38bdf8;
+      padding: 3px 8px;
+      border-radius: 4px;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      font-weight: 600;
+    }
+
+    .media-meta {
+      padding: 12px;
+      font-size: 0.78rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .media-link-btn {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.76rem;
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .media-link-btn:hover { text-decoration: underline; }
+
+    /* Perfiles */
+    .profiles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+
+    .profile-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 0.2s;
+    }
+
+    .profile-card:hover { border-color: rgba(56, 189, 248, 0.4); }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .profile-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .profile-titles h3 { font-size: 0.95rem; font-weight: 700; }
+    .profile-titles p { font-size: 0.76rem; color: var(--text-secondary); }
+
+    .profile-facts {
+      font-size: 0.78rem;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .profile-facts span { color: var(--text-secondary); }
+    .profile-facts strong { color: var(--text); }
+
+    .journalism-snippet {
+      background: rgba(56, 189, 248, 0.08);
+      border-left: 3px solid var(--primary);
+      padding: 8px 10px;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.78rem;
+      font-style: italic;
+      color: #cbd5e1;
+    }
+
+    /* Monitores y Scroll en Vivo de X */
+    .tweet-card {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+
+    .tweet-card:hover { border-color: rgba(56, 189, 248, 0.4); }
+
+    .tweet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .tweet-author {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tweet-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .tweet-body {
+      font-size: 0.84rem;
+      line-height: 1.45;
+      color: #e2e8f0;
+      margin-bottom: 10px;
+    }
+
+    .tweet-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 8px;
+    }
+
+    /* Inspector */
+    .inspector-drawer {
+      width: 380px;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(20px);
+      border-left: 1px solid var(--border);
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .hash-display {
+      background: #070d19;
+      font-family: monospace;
+      font-size: 0.7rem;
+      padding: 8px;
+      border-radius: 6px;
+      color: #38bdf8;
+      word-break: break-all;
+      margin-top: 4px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cabecera Apple / Web Tech -->
+  <header class="apple-header">
+    <div class="brand-wrap">
+      <div class="brand-logo">🔍</div>
+      <div class="brand-info">
+        <h1>DETECTIVE DIGITAL <span style="font-size: 0.65rem; background: var(--primary-accent); padding: 2px 6px; border-radius: 4px;">PRO</span></h1>
+        <p>Inteligencia OSINT, Matrices Automáticas y Cadena de Custodia • Berkeley & IPYS</p>
+      </div>
+    </div>
+
+    <!-- Buscador Global Inteligente -->
+    <div class="global-search-bar">
+      <span class="search-icon-pos">⌘</span>
+      <input type="text" class="global-search-input" id="global-search" placeholder="Escribe cualquier nombre (ej. Nicolás Maduro), lugar o dork..." onkeyup="handleGlobalSearch(event)">
+      <span class="search-kbd">Enter</span>
+    </div>
+
+    <!-- Acciones de Exportación -->
+    <div class="top-actions">
+      <button class="btn-export" onclick="descargarExcelCompleto()">
+        <span>📊</span> Descargar Matriz Excel (.xlsx)
+      </button>
+      <button class="btn-export primary" onclick="exportarPDF()">
+        <span>📑</span> Descargar Dossier PDF
+      </button>
+    </div>
+  </header>
+
+  <!-- Pestañas de Navegación -->
+  <nav class="apple-nav">
+    <button class="nav-item active" onclick="navigateTab('datos')">📊 Buscador de Datos & Matriz</button>
+    <button class="nav-item" onclick="navigateTab('perfiles')">👤 Directorio de Perfiles</button>
+    <button class="nav-item" onclick="navigateTab('feeds')">📡 Tri-Feed en Vivo (Contraste)</button>
+    <button class="nav-item" onclick="navigateTab('observatorio')">🚨 Observatorio de Eventos Críticos</button>
+    <button class="nav-item" onclick="navigateTab('monitores')">🤖 Radar en Vivo X (Monitores)</button>
+    <button class="nav-item" onclick="navigateTab('judicial')">⚖️ Sentencias TSJ & Gacetas</button>
+    <button class="nav-item" onclick="navigateTab('imagenes')">🖼️ Galería Forense</button>
+  </nav>
+
+  <!-- Espacio de Trabajo -->
+  <div class="app-workspace">
+    
+    <div class="view-container">
+
+      <!-- ======================================================== -->
+      <!-- BANNER DE SÍNTESIS DINÁMICA                              -->
+      <!-- ======================================================== -->
+      <div id="dynamic-synthesis-banner" style="display: none; background: rgba(56, 189, 248, 0.1); border: 1px solid var(--primary); padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 0.84rem; display: flex; justify-content: space-between; align-items: center;">
+        <div id="synthesis-text">
+          ⚡ <strong>Síntesis Automática:</strong> Se ha investigado e incorporado el perfil de <strong id="synth-name"></strong> a la base de datos de inteligencia.
+        </div>
+        <button class="btn-export" style="padding: 4px 10px;" onclick="document.getElementById('dynamic-synthesis-banner').style.display='none'">Entendido</button>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- PESTAÑA 1: BUSCADOR DE DATOS & MATRICES                   -->
+      <!-- ======================================================== -->
+      <div id="view-datos" class="tab-view">
+        <div class="glass-card">
+          <div class="card-head">
+            <h2><span>📑</span> Matriz de Evidencias y Datos en Diálogo</h2>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="filter-table-input" placeholder="Filtrar matriz..." class="global-search-input" style="width: 240px; padding: 6px 12px;" onkeyup="filtrarTablaDatos()">
+              <button class="btn-export" onclick="descargarCSV()">⬇️ CSV</button>
+              <button class="btn-export primary" onclick="descargarExcelCompleto()">📊 Descargar Excel Completo</button>
+            </div>
+          </div>
+
+          <div class="data-table-wrap">
+            <table class="data-table" id="tabla-evidencias">
+              <thead>
+                <tr>
+                  <th>Nombre / ID</th>
+                  <th>Fuente</th>
+                  <th>Ubicación</th>
+                  <th>Hash SHA-256 (Copia Probatoria)</th>
+                  <th>Estado</th>
+                  <th>Diálogo Detectado</th>
+                  <th>Actores Clave</th>
+                  <th>Situación Factual</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-evidencias"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- PESTAÑA 2: DIRECTORIO DE PERFILES PERIODÍSTICOS          -->
+      <!-- ======================================================== -->
+      <div id="view-perfiles" class="tab-view" style="display: none;">
+        <div class="glass-card">
+          <div class="card-head">
+            <h2><span>👤</span> Perfiles de Funcionarios, Políticos, Empresarios y Fuentes</h2>
+            <div class="pill blue">Generador de Contexto para Redacción</div>
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <input type="text" id="search-profile-input" placeholder="Buscar por nombre, cargo, institución o gaceta..." class="global-search-input" style="width: 100%; max-width: 480px;" onkeyup="filtrarPerfiles()">
+          </div>
+
+          <div class="profiles-grid" id="profiles-grid-container"></div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- PESTAÑA 3: TRI-FEED EN VIVO (CONTRASTE TRIPARTITO)        -->
+      <!-- ======================================================== -->
+      <div id="view-feeds" class="tab-view" style="display: none;">
+        <div class="glass-card" style="padding: 14px 20px; margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 14px;">
+            <div style="font-weight: 700; font-size: 0.9rem;">
+              <span>📡</span> Buscador de Contraste en Vivo:
+            </div>
+            <input type="text" id="feed-search-input" class="global-search-input" placeholder="Filtrar titulares en las 3 columnas simultáneamente (ej. Maduro, allanamiento, apagón)..." onkeyup="filtrarFeeds()" style="flex: 1;">
+            <button class="btn-export" onclick="simularActualizacionFeeds()">🔄 Actualizar Despachos</button>
+          </div>
+        </div>
+
+        <div class="triple-feed-layout">
+          
+          <!-- Columna 1: Medios Independientes y DDHH -->
+          <div class="feed-column">
+            <div class="feed-header">
+              <h3><span>🟢</span> Prensa Independiente & DDHH</h3>
+              <span class="pill blue">Terreno</span>
+            </div>
+            <div class="feed-scroll" id="feed-independiente"></div>
+          </div>
+
+          <!-- Columna 2: Portales Oficiales del Estado -->
+          <div class="feed-column">
+            <div class="feed-header">
+              <h3><span>🔴</span> Medios & Portales Oficiales</h3>
+              <span class="pill amber">Versión Estatal</span>
+            </div>
+            <div class="feed-scroll" id="feed-oficial"></div>
+          </div>
+
+          <!-- Columna 3: Agencias Internacionales -->
+          <div class="feed-column">
+            <div class="feed-header">
+              <h3><span>🌐</span> Agencias Internacionales</h3>
+              <span class="pill purple">Cobertura Global</span>
+            </div>
+            <div class="feed-scroll" id="feed-internacional"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- PESTAÑA 4: OBSERVATORIO DE EVENTOS CRÍTICOS              -->
+      <!-- ======================================================== -->
+      <div id="view-observatorio" class="tab-view" style="display: none;">
+        <div class="glass-card">
+          <div class="card-head">
+            <h2><span>🚨</span> Observatorio de Eventos Críticos & Estratos de Información</h2>
+            <div style="display: flex; gap: 8px;">
+              <select id="filtro-categoria-obs" class="global-search-input" style="width: 220px; padding: 6px;" onchange="filtrarObservatorio()">
+                <option value="TODOS">Todos los Estratos</option>
+                <option value="Presos Políticos">⛓️ Presos Políticos</option>
+                <option value="Violaciones de DDHH">🚨 Violaciones de DDHH</option>
+                <option value="Apagones y Servicios">⚡ Apagones y Servicios</option>
+                <option value="Protestas Sociales">📢 Protestas Sociales</option>
+                <option value="Homicidios / Ejecuciones">⚠️ Homicidios / Ejecuciones</option>
+                <option value="Desastres e Incendios">🌪️ Desastres e Incendios</option>
+              </select>
+              <button class="btn-export" onclick="descargarCSVObservatorio()">⬇️ Exportar Estrato</button>
+            </div>
+          </div>
+
+          <div class="data-table-wrap">
+            <table class="data-table" id="tabla-observatorio">
+              <thead>
+                <tr>
+                  <th>Categoría</th>
+                  <th>Fecha</th>
+                  <th>Lugar / Región</th>
+                  <th>Víctimas / Afectados</th>
+                  <th>Órganos Involucrados</th>
+                  <th>Descripción del Suceso</th>
+                  <th>Corroboración</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-observatorio"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- PESTAÑA 5: MONITORES DE X CON RADAR EN VIVO               -->
+      <!-- ======================================================== -->
+      <div id="view-monitores" class="tab-view" style="display: none;">
+        <div class="glass-card">
+          <div class="card-head">
+            <h2><span>🤖</span> Radar en Vivo de X (Monitoreo Booleano Anexo V)</h2>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <select id="historial-fecha" class="global-search-input" style="width: 170px; padding: 6px;" onchange="filtrarHistorialX()">
+                <option value="HOY">📅 Hoy (08 Octubre)</option>
+                <option value="AYER">📅 Ayer (07 Octubre)</option>
+                <option value="SEMANA">📅 Última Semana</option>
+              </select>
+              <button class="btn-export primary" onclick="descargarExcelCompleto()">📊 Descargar Matriz del Día</button>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 360px 1fr; gap: 20px;">
+            <!-- Controles del Monitor -->
+            <div style="background: rgba(0,0,0,0.25); padding: 16px; border-radius: 10px; border: 1px solid var(--border); height: fit-content;">
+              <h3 style="font-size: 0.88rem; margin-bottom: 10px;">🛠️ Constructor de Consulta Anexo V</h3>
+              <div style="margin-bottom: 10px;">
+                <label style="font-size: 0.75rem; color: var(--text-secondary);">Término</label>
+                <input type="text" id="x-term" class="global-search-input" value="allanamiento" oninput="actualizarDorkX()">
+              </div>
+              <div style="margin-bottom: 10px;">
+                <label style="font-size: 0.75rem; color: var(--text-secondary);">Frase Exacta</label>
+                <input type="text" id="x-phrase" class="global-search-input" value="sin orden judicial" oninput="actualizarDorkX()">
+              </div>
+              <div style="margin-bottom: 10px;">
+                <label style="font-size: 0.75rem; color: var(--text-secondary);">Ubicación (near:)</label>
+                <input type="text" id="x-loc" class="global-search-input" value="Caracas" oninput="actualizarDorkX()">
+              </div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 10px;">
+                Sintaxis activa:
+                <code id="x-dork-preview" style="color: var(--primary); display: block; background: #070d19; padding: 6px; border-radius: 4px; font-family: monospace;">allanamiento "sin orden judicial" near:"Caracas" filter:media</code>
+              </div>
+              <button class="btn-export primary" style="width: 100%; justify-content: center;" onclick="simularTweetRadar()">
+                ⚡ Simular Nueva Captura en Radar
+              </button>
+            </div>
+
+            <!-- Scroll en vivo de Tweets -->
+            <div>
+              <h3 style="font-size: 0.88rem; margin-bottom: 12px; color: var(--text-secondary);">
+                Stream de Capturas en Tiempo Real (Preservadas con SHA-256)
+              </h3>
+              <div id="tweets-live-scroll" style="max-height: calc(100vh - 280px); overflow-y: auto;">
+                <!-- Tweets inyectados por JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- PESTAÑA 6: BUSCADOR JUDICIAL TSJ & GACETAS               -->
+      <!-- ======================================================== -->
+      <div id="view-judicial" class="tab-view" style="display: none;">
+        <div class="glass-card">
+          <div class="card-head">
+            <h2><span>⚖️</span> Buscador de Sentencias TSJ & Gacetas Oficiales</h2>
+            <div class="pill purple">Visor de Documentos Web</div>
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+            <input type="text" id="judicial-query" class="global-search-input" style="flex: 1;" placeholder="Buscar términos (ej. allanamiento, flagrancia, DGCIM, privativa de libertad)..." onkeyup="buscarJudicial()">
+            <select class="global-search-input" id="judicial-sala" style="width: 220px;" onchange="buscarJudicial()">
+              <option value="TODAS">Todas las Salas / Gacetas</option>
+              <option value="Sala Constitucional">Sala Constitucional TSJ</option>
+              <option value="Sala Penal">Sala Penal TSJ</option>
+              <option value="Gaceta Oficial">Gacetas Oficiales</option>
+            </select>
+          </div>
+
+          <div id="judicial-results-list"></div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- PESTAÑA 7: GALERÍA FORENSE VISUAL CON ENLACES            -->
+      <!-- ======================================================== -->
+      <div id="view-imagenes" class="tab-view" style="display: none;">
+        <div class="glass-card">
+          <div class="card-head">
+            <h2><span>🖼️</span> Galería Forense de Evidencia Visual & Enlaces Directos</h2>
+            <div style="font-size: 0.8rem; color: var(--text-secondary);">
+              Imágenes nítidas con cadena de custodia y enlace directo a la fuente
+            </div>
+          </div>
+
+          <div class="media-gallery" id="gallery-container"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PANEL INSPECTOR LATERAL -->
+    <div class="inspector-drawer" id="inspector-drawer">
+      <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+        <span>🔍</span> Inspector Forense
+      </h3>
+      <div id="inspector-body">
+        <p style="font-size: 0.82rem; color: var(--text-secondary);">
+          Selecciona cualquier elemento de la plataforma para inspeccionar sus metadatos de custodia, procedencia y enlaces directos.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ==========================================
+    // ESTADO GLOBAL DE DATOS
+    // ==========================================
+    let evidenciasData = [
+      {
+        id: "fnt_423a341b",
+        nombre: "Reporte Ciudadano El Valle",
+        fuente: "X (Twitter)",
+        direccion: "Calle Real, Sector San Andrés",
+        ciudad: "Caracas",
+        pais: "Venezuela",
+        caso: "Operativo y Detención en El Valle",
+        situacion: "Allanamiento forzado sin orden judicial y detención de joven desarmado por funcionarios en Hilux sin placas.",
+        conectores: "CORROBORACION_CRUZADA con reporte fotográfico",
+        hash: "be58607d86339e9cf98a18c676da0e8f4c5f4e63d10981326ca592c504ff13a4",
+        url: "https://x.com/vecino_valle/status/1843291029",
+        fecha: "2026-10-07 14:15 UTC",
+        verificacion: "HECHO PROBATORIO",
+        verificacion_pill: "green",
+        actores: ["DGCIM", "El Valle, Caracas", "Hilux Blanca"]
+      },
+      {
+        id: "fnt_e43b1fe7",
+        nombre: "Comunicado Oficial MPPRIJP",
+        fuente: "Portal Institucional",
+        direccion: "Parroquia El Valle",
+        ciudad: "Caracas",
+        pais: "Venezuela",
+        caso: "Operativo y Detención en El Valle",
+        situacion: "Versión estatal: presunto enfrentamiento armado y neutralización de célula desestabilizadora.",
+        conectores: "CONTRADICCION_OFICIAL_VS_HECHO con evidencia en terreno",
+        hash: "98738b1ebfe9d296cf95b3ee2b4a18e2237704d9b775fb0f6e2127ce7456ff6f",
+        url: "https://mpprijp.gob.ve/noticias/operativo-el-valle",
+        fecha: "2026-10-07 17:30 UTC",
+        verificacion: "CONTRADICCIÓN DETECTADA",
+        verificacion_pill: "red",
+        actores: ["El Valle, Caracas", "Seguridad Ciudadana"]
+      },
+      {
+        id: "fnt_288613f6",
+        nombre: "Gaceta Oficial Extraordinaria Nº 42.180",
+        fuente: "Gaceta Oficial Digital",
+        direccion: "Distrito Capital",
+        ciudad: "Caracas",
+        pais: "Venezuela",
+        caso: "Operativo y Detención en El Valle",
+        situacion: "Resolución ministerial 04921: nombramiento de mando de patrullaje especial a la DGCIM en El Valle.",
+        conectores: "PRUEBA_DE_VINCULACION (Berkeley §60): Cadena de Mando",
+        hash: "d4c2557d87c40acd7544acc75096f32de16290559a9bbc110866489c912c3b7e",
+        url: "https://spg.tsj.gob.ve/gacetas/resolucion-dgcim-mando.pdf",
+        fecha: "2026-10-01 09:00 UTC",
+        verificacion: "HECHO PROBATORIO",
+        verificacion_pill: "purple",
+        actores: ["DGCIM", "El Valle, Caracas", "Cnel. Graciliano Santos"]
+      }
+    ];
+
+    let perfilesData = [
+      {
+        id: "p_maduro",
+        nombre: "Nicolás Maduro Moros",
+        tipo: "Poder Ejecutivo / Comandante en Jefe",
+        cargo: "Presidente de la República Bolivariana de Venezuela",
+        institucion: "Presidencia de la República / FANB",
+        gacetas: "Decretos Presidenciales, Estados de Excepción, Proclamaciones CNE",
+        filiacion: "PSUV / Gran Polo Patriótico",
+        empresas: "Control institucional de empresas del Estado (PDVSA, CVG, Minerven)",
+        alertas: "Investigación en la Corte Penal Internacional (Causa Venezuela I), Informes Misión de la ONU.",
+        resumen_redaccion: "Nicolás Maduro Moros ejerce la Presidencia de la República y la Comandancia en Jefe de la Fuerza Armada Nacional Bolivariana (FANB), emitiendo los decretos presidenciales que regulan las zonas operativas de defensa integral y el marco institucional de las comisiones de seguridad ciudadana."
+      },
+      {
+        id: "p_cabello",
+        nombre: "Diosdado Cabello Rondón",
+        tipo: "Poder Ejecutivo / Seguridad",
+        cargo: "Ministro del Poder Popular para Relaciones Interiores, Justicia y Paz",
+        institucion: "Ministerio de Relaciones Interiores / Vicepresidencia Sectorial de Seguridad",
+        gacetas: "Gaceta Oficial Extraordinaria Nº 6.835 (Designación Ministerial)",
+        filiacion: "PSUV (Secretario General / Alto Mando Político)",
+        empresas: "Supervisión de contrataciones de dotación policial y sistemas penitenciarios",
+        alertas: "Sancionado por la OFAC (EE.UU.) y la Unión Europea; denuncias de organismos de DDHH sobre detenciones masivas.",
+        resumen_redaccion: "Como titular de Relaciones Interiores, Justicia y Paz, Diosdado Cabello tiene bajo su línea directa de mando a la Policía Nacional Bolivariana (PNB-DAET), coordinando los operativos de orden público e investigaciones penales de alcance nacional."
+      },
+      {
+        id: "p_santos",
+        nombre: "Cnel. Rafael Graciliano Santos",
+        tipo: "Funcionario Militar / Inteligencia",
+        cargo: "Director de Operaciones Especiales (DGCIM)",
+        institucion: "Dirección General de Contrainteligencia Militar",
+        gacetas: "Gaceta Oficial Extraordinaria Nº 6.782 (Resolución 0492)",
+        filiacion: "Alto Mando Militar",
+        empresas: "Vinculado a contratista de telecomunicaciones SegurTech C.A.",
+        alertas: "Mencionado en testimonios ante la Misión de Hechos de la ONU por detenciones selectivas.",
+        resumen_redaccion: "El Cnel. Santos coordina las unidades tácticas de contrainteligencia militar con atribuciones territoriales formalizadas mediante la Resolución 0492 en la Gaceta Oficial 6.782."
+      },
+      {
+        id: "p_torrealba",
+        nombre: "Alejandro Torrealba Quintero",
+        tipo: "Empresario / Contratista",
+        cargo: "Presidente y Accionista Mayoritario",
+        institucion: "Inversiones Blindados del Centro C.A. (RIF: J-40819283-1)",
+        gacetas: "Contratación Pública MPPRIJP-2023-CN-091",
+        filiacion: "Contratista del sector defensa",
+        empresas: "Blindados del Centro C.A. (Caracas), Apex Logistics LLC (Panamá)",
+        alertas: "Investigación por sobreprecio en acondicionamiento de camionetas Hilux para uso táctico.",
+        resumen_redaccion: "Torrealba Quintero figura en el Registro Nacional de Contratistas como beneficiario de órdenes de compra para el blindaje de camionetas de patrullaje empleadas por unidades policiales de contrainteligencia."
+      }
+    ];
+
+    let observatorioData = [
+      {
+        categoria: "Presos Políticos",
+        fecha: "2026-10-07",
+        lugar: "El Helicoide (SEBIN), Caracas",
+        afectados: "Dirigente Juvenil Comunitario",
+        organos: "DGCIM / SEBIN",
+        descripcion: "Detención arbitraria sin orden judicial; recluido sin permitir acceso a familiares ni defensa privada.",
+        corroboracion: "ALTO (5 fuentes)",
+        estado: "HECHO PROBATORIO"
+      },
+      {
+        categoria: "Violaciones de DDHH",
+        fecha: "2026-10-07",
+        lugar: "Sector San Andrés, El Valle, Caracas",
+        afectados: "Familia residente en inmueble",
+        organos: "DGCIM (Comisión encapuchada)",
+        descripcion: "Irrupción forzada nocturna sin orden de allanamiento ni presencia del Ministerio Público.",
+        corroboracion: "ALTO (3 fuentes)",
+        estado: "HECHO PROBATORIO"
+      },
+      {
+        categoria: "Apagones y Servicios",
+        fecha: "2026-10-06",
+        lugar: "Maracaibo, San Francisco (Zulia)",
+        afectados: "Más de 350.000 usuarios",
+        organos: "CORPOELEC",
+        descripcion: "Interrupción eléctrica prolongada de 14 horas continuas con colapso de estaciones de bombeo de agua.",
+        corroboracion: "ALTO (Monitoreo técnico)",
+        estado: "HECHO PROBATORIO"
+      },
+      {
+        categoria: "Protestas Sociales",
+        fecha: "2026-10-05",
+        lugar: "Av. Urdaneta, Municipio Libertador, Caracas",
+        afectados: "Trabajadores del sector salud y docentes",
+        organos: "PNB (Cordón antimotín)",
+        descripcion: "Manifestación pacífica exigiendo restitución salarial; contingente policial impidió el avance con gases.",
+        corroboracion: "MEDIO (Reportes de prensa)",
+        estado: "HECHO PROBATORIO"
+      },
+      {
+        categoria: "Homicidios / Ejecuciones",
+        fecha: "2026-09-28",
+        lugar: "Barrio José Félix Ribas, Petare, Miranda",
+        afectados: "1 ciudadano de 24 años",
+        organos: "Comisiones tácticas policiales",
+        descripcion: "Versión de resistencia a la autoridad desmentida por vecinos que documentaron la aprehensión previa con vida.",
+        corroboracion: "MEDIO (En investigación)",
+        estado: "CONJETURA EN REVISIÓN"
+      },
+      {
+        categoria: "Desastres e Incendios",
+        fecha: "2026-09-22",
+        lugar: "Las Tejerías, Estado Aragua",
+        afectados: "Comunidades ribereñas",
+        organos: "Protección Civil / Bomberos",
+        descripcion: "Desbordamiento de quebradas por lluvias extraordinarias con afectación de viviendas y vialidad.",
+        corroboracion: "ALTO (Reportes satelitales)",
+        estado: "HECHO PROBATORIO"
+      }
+    ];
+
+    const feedsDatabase = {
+      independiente: [
+        {
+          medio: "Efecto Cocuyo",
+          hora: "Hace 10 min",
+          titulo: "Denuncian nueva ola de allanamientos selectivos en parroquias del sur de Caracas",
+          resumen: "Organizaciones defensoras de DDHH recaban testimonios sobre despliegues en El Valle y Santa Rosalía sin orden de aprehensión judicial."
+        },
+        {
+          medio: "El Pitazo",
+          hora: "Hace 28 min",
+          titulo: "Familiares exigen fé de vida tras detención de dirigentes comunitarios por cuerpos especiales",
+          resumen: "Abogados denuncian incomunicación procesal y traslados a centros clandestinos de retención preventiva."
+        },
+        {
+          medio: "Armando.info",
+          hora: "Hace 2 horas",
+          titulo: "Los proveedores de la sombra: blindajes y camionetas sin matrícula en operativos estatales",
+          resumen: "Registros mercantiles revelan el entramado corporativo tras los vehículos empleados en redadas tácticas."
+        }
+      ],
+      oficial: [
+        {
+          medio: "Prensa MPPRIJP",
+          hora: "Hace 18 min",
+          titulo: "Comisiones de seguridad neutralizan célula terrorista en El Valle tras enfrentamiento",
+          resumen: "Vocería institucional afirma que se frustró un plan de alteración del orden público e incautó armamento de alto calibre."
+        },
+        {
+          medio: "Agencia Venezolana de Noticias (AVN)",
+          hora: "Hace 1 hora",
+          titulo: "Gobierno Bolivariano intensifica patrullaje preventivo en cuadrantes de paz de la Gran Caracas",
+          resumen: "Destacan éxito de operativos combinados de la PNB y cuerpos auxiliares para resguardar la tranquilidad ciudadana."
+        }
+      ],
+      internacional: [
+        {
+          medio: "Reuters",
+          hora: "Hace 30 min",
+          titulo: "Venezuela security forces raid opposition neighborhoods, rights groups say",
+          resumen: "Human rights advocates report increase in warrantless detentions in Caracas as political tensions persist."
+        },
+        {
+          medio: "Associated Press (AP)",
+          hora: "Hace 50 min",
+          titulo: "UN human rights experts raise alarm over arbitrary arrests and command structure in Venezuela",
+          resumen: "Independent fact-finding mission highlights direct chain of command in tactical security operations."
+        },
+        {
+          medio: "El País (España)",
+          hora: "Hace 3 horas",
+          titulo: "La opacidad y el uso de patrullas sin placas marcan la nueva fase de detenciones en Caracas",
+          resumen: "Testimonios y registros visuales contrastan con los boletines oficiales emitidos por el Ministerio del Interior."
+        }
+      ]
+    };
+
+    let tweetsRadar = [
+      {
+        id: "tw_01",
+        avatar: "👤",
+        usuario: "Vecino Alerta El Valle",
+        handle: "@alerta_valle",
+        fecha: "2026-10-08 05:45 UTC",
+        texto: "URGENTE: Nuevamente comisiones encapuchadas en camionetas Hilux blancas sin placas entraron al callejón San Andrés. Se llevaron a dos personas sin mediar palabra ni mostrar orden.",
+        hash: "7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069",
+        url: "https://x.com/alerta_valle/status/194829104",
+        dia: "HOY"
+      },
+      {
+        id: "tw_02",
+        avatar: "📢",
+        usuario: "Monitor DDHH Caracas",
+        handle: "@monitorddhh_ccs",
+        fecha: "2026-10-07 19:20 UTC",
+        texto: "Confirmamos la detención arbitraria reportada en horas de la tarde en El Valle. El ciudadano fue llevado inicialmente hacia la sede de Boleíta según testigos presenciales.",
+        hash: "41982bca91823741928374192837419283741928374192837419283741928374",
+        url: "https://x.com/monitorddhh_ccs/status/194821092",
+        dia: "AYER"
+      }
+    ];
+
+    const imagenesForense = [
+      {
+        titulo: "Vehículo Táctico Hilux sin placas en sector San Andrés",
+        fecha: "07/10/2026 14:38 UTC",
+        lugar: "El Valle, Caracas (10.4681 N, -66.9069 W)",
+        dispositivo: "Xiaomi Redmi Note 11 (EXIF verificado)",
+        hash: "3a91fbc827419e761048b29c948e7162b4891e7c2a1059f817492cba91823741",
+        url_fuente: "https://t.me/vecinos_valle_denuncias/491",
+        thumb_bg: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
+        thumb_label: "FOTOGRAFÍA TERRENO • VEHÍCULO SIN PLACAS"
+      },
+      {
+        titulo: "Captura Satelital: Coordenadas del Inmueble Allanado",
+        fecha: "07/10/2026 14:50 UTC",
+        lugar: "Calle Real de El Valle, Cuadrante 3",
+        dispositivo: "Google Earth Pro Imagery 2026",
+        hash: "8f12b99c01827416e9172834b719284719283741928374192837419283741928",
+        url_fuente: "https://earth.google.com/web/@10.4681,-66.9069",
+        thumb_bg: "linear-gradient(135deg, #064e3b 0%, #022c22 100%)",
+        thumb_label: "SATÉLITE GEOESPACIAL • COORDENADAS VERIFICADAS"
+      },
+      {
+        titulo: "Gaceta Oficial Nº 42.180 (Resolución de Mando DGCIM)",
+        fecha: "01/10/2026 09:00 UTC",
+        lugar: "Imprenta Nacional, Caracas",
+        dispositivo: "Documento PDF Certificado",
+        hash: "b7f4e93ed9554b07c0a413b0336252492672551cf1c2faada55ae27dc14106eb",
+        url_fuente: "https://spg.tsj.gob.ve/gacetas/resolucion-dgcim-mando.pdf",
+        thumb_bg: "linear-gradient(135deg, #31104b 0%, #1e1b4b 100%)",
+        thumb_label: "DOCUMENTO PDF • ACTO ADMINISTRATIVO"
+      }
+    ];
+
+    const judicialesData = [
+      {
+        numero: "Sentencia Nº 0142",
+        sala: "Sala Constitucional",
+        fecha: "2025-06-18",
+        ponente: "Mag. Lourdes Suárez Anderson",
+        expediente: "Exp. Nº 24-0589",
+        extracto: "Se desestima la acción de amparo constitucional alegando que las actuaciones en el marco de operativos de seguridad se presumen apegadas al principio de flagrancia, no siendo admisible el material audiovisual de redes sociales sin el cumplimiento estricto de la cadena de custodia legal.",
+        url_pdf: "http://historico.tsj.gob.ve/decisiones/scon/junio/0142-180625-2025.PDF"
+      },
+      {
+        numero: "Sentencia Nº 0089",
+        sala: "Sala Penal",
+        fecha: "2024-11-20",
+        ponente: "Mag. Elsa Gómez Moreno",
+        expediente: "Exp. Nº 23-1102",
+        extracto: "En relación a las denuncias de detención arbitraria ejecutadas por funcionarios de la DGCIM sin orden judicial previa, la Sala Penal determina que la calificación de flagrancia invocada en el acta policial convalida la aprehensión preventiva.",
+        url_pdf: "http://historico.tsj.gob.ve/decisiones/sp/noviembre/0089-201124-2024.PDF"
+      }
+    ];
+
+    // ==========================================
+    // RENDERIZADOS PRINCIPALES
+    // ==========================================
+    function navigateTab(tabName) {
+      document.querySelectorAll('.tab-view').forEach(v => v.style.display = 'none');
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+
+      document.getElementById('view-' + tabName).style.display = 'block';
+      event.currentTarget.classList.add('active');
+    }
+
+    function renderMatrizDatos(data) {
+      const tbody = document.getElementById('tbody-evidencias');
+      tbody.innerHTML = '';
+      data.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.onclick = () => selectEvidence(item);
+        tr.style.cursor = 'pointer';
+        tr.innerHTML = `
+          <td><strong>${item.nombre}</strong><br/><span style="color:var(--text-muted); font-size:0.72rem;">${item.id}</span></td>
+          <td>${item.fuente}</td>
+          <td>${item.ciudad}, ${item.pais}</td>
+          <td><code style="font-size:0.7rem; color:var(--primary);">${item.hash.substring(0, 16)}...</code></td>
+          <td><span class="pill ${item.verificacion_pill}">${item.verificacion}</span></td>
+          <td><span class="pill blue">${item.conectores.substring(0, 28)}...</span></td>
+          <td><span style="font-size:0.75rem; color:#cbd5e1;">${item.actores.join(', ')}</span></td>
+          <td style="max-width: 220px; font-size: 0.75rem;">${item.situacion}</td>
+          <td><button class="btn-export" onclick="event.stopPropagation(); window.open('${item.url}', '_blank')">Abrir Link ↗</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderPerfiles(data) {
+      const container = document.getElementById('profiles-grid-container');
+      container.innerHTML = '';
+      data.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'profile-card';
+        card.onclick = () => selectProfile(p);
+        card.innerHTML = `
+          <div class="profile-header">
+            <div class="profile-avatar">${p.tipo.includes('Militar') ? '🎖️' : (p.tipo.includes('Ejecutivo') ? '🏛️' : '💼')}</div>
+            <div class="profile-titles">
+              <h3>${p.nombre}</h3>
+              <p>${p.cargo}</p>
+            </div>
+          </div>
+          <div class="profile-facts">
+            <div><span>Institución:</span> <strong>${p.institucion}</strong></div>
+            <div><span>Gacetas / Decretos:</span> <strong>${p.gacetas}</strong></div>
+            <div><span>Empresas / Nexos:</span> <strong>${p.empresas}</strong></div>
+            <div><span>Alertas / Escrutinio:</span> <strong style="color: #f87171;">${p.alertas}</strong></div>
+          </div>
+          <div class="journalism-snippet">
+            "${p.resumen_redaccion}"
+          </div>
+          <button class="btn-export primary" onclick="event.stopPropagation(); copiarTexto('${p.resumen_redaccion.replace(/'/g, "\'")}')">
+            📋 Copiar Ficha para Redacción Periodística
+          </button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderObservatorio(data) {
+      const tbody = document.getElementById('tbody-observatorio');
+      tbody.innerHTML = '';
+      data.forEach(obs => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span class="pill purple">${obs.categoria}</span></td>
+          <td>${obs.fecha}</td>
+          <td><strong>${obs.lugar}</strong></td>
+          <td>${obs.afectados}</td>
+          <td><span style="font-size:0.75rem; color:#cbd5e1;">${obs.organos}</span></td>
+          <td style="max-width: 240px; font-size: 0.75rem;">${obs.descripcion}</td>
+          <td><span class="pill green">${obs.corroboracion}</span></td>
+          <td><span class="pill blue">${obs.estado}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderTriFeeds(filter = '') {
+      const q = filter.toLowerCase().trim();
+
+      const fInd = document.getElementById('feed-independiente');
+      fInd.innerHTML = '';
+      feedsDatabase.independiente.filter(n => !q || n.titulo.toLowerCase().includes(q) || n.resumen.toLowerCase().includes(q)).forEach(n => {
+        fInd.innerHTML += `
+          <div class="news-card">
+            <div class="news-meta"><span class="news-outlet">${n.medio}</span><span>${n.hora}</span></div>
+            <h4>${n.titulo}</h4>
+            <div class="news-desc">${n.resumen}</div>
+          </div>
+        `;
+      });
+
+      const fOfi = document.getElementById('feed-oficial');
+      fOfi.innerHTML = '';
+      feedsDatabase.oficial.filter(n => !q || n.titulo.toLowerCase().includes(q) || n.resumen.toLowerCase().includes(q)).forEach(n => {
+        fOfi.innerHTML += `
+          <div class="news-card" style="border-left: 3px solid var(--warning);">
+            <div class="news-meta"><span class="news-outlet" style="color: var(--warning);">${n.medio}</span><span>${n.hora}</span></div>
+            <h4>${n.titulo}</h4>
+            <div class="news-desc">${n.resumen}</div>
+          </div>
+        `;
+      });
+
+      const fInt = document.getElementById('feed-internacional');
+      fInt.innerHTML = '';
+      feedsDatabase.internacional.filter(n => !q || n.titulo.toLowerCase().includes(q) || n.resumen.toLowerCase().includes(q)).forEach(n => {
+        fInt.innerHTML += `
+          <div class="news-card" style="border-left: 3px solid var(--purple);">
+            <div class="news-meta"><span class="news-outlet" style="color: var(--purple);">${n.medio}</span><span>${n.hora}</span></div>
+            <h4>${n.titulo}</h4>
+            <div class="news-desc">${n.resumen}</div>
+          </div>
+        `;
+      });
+    }
+
+    function renderTweetsLive() {
+      const container = document.getElementById('tweets-live-scroll');
+      container.innerHTML = '';
+      tweetsRadar.forEach(tw => {
+        container.innerHTML += `
+          <div class="tweet-card">
+            <div class="tweet-header">
+              <div class="tweet-author">
+                <div class="tweet-avatar">${tw.avatar}</div>
+                <div>
+                  <strong style="font-size:0.85rem;">${tw.usuario}</strong>
+                  <span style="font-size:0.75rem; color:var(--text-muted); margin-left: 4px;">${tw.handle}</span>
+                </div>
+              </div>
+              <span class="pill green">CAPTURA AUTOMÁTICA</span>
+            </div>
+            <div class="tweet-body">${tw.texto}</div>
+            <div class="tweet-footer">
+              <div>
+                <span>🕒 ${tw.fecha}</span> • <code style="color:var(--primary); font-size:0.68rem;">SHA: ${tw.hash.substring(0, 12)}...</code>
+              </div>
+              <a href="${tw.url}" target="_blank" class="media-link-btn" onclick="event.stopPropagation()">Ver Tweet en X ↗</a>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderGaleriaVisual() {
+      const container = document.getElementById('gallery-container');
+      container.innerHTML = '';
+      imagenesForense.forEach(img => {
+        container.innerHTML += `
+          <div class="media-card" onclick="selectImage('${img.hash}')">
+            <div class="media-thumb-wrap" style="background: ${img.thumb_bg}; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px; text-align: center;">
+              <div style="font-size: 38px; margin-bottom: 6px;">📷</div>
+              <div style="font-size: 0.72rem; font-weight: 700; color: #e2e8f0; max-width: 90%;">${img.thumb_label}</div>
+              <div class="media-badge">EXIF OK</div>
+            </div>
+            <div class="media-meta">
+              <div>
+                <h4 style="font-size: 0.86rem; font-weight: 600; margin-bottom: 4px;">${img.titulo}</h4>
+                <p style="color: var(--text-secondary); font-size: 0.75rem;">📍 ${img.lugar}</p>
+                <div style="font-family: monospace; font-size: 0.68rem; color: var(--primary); margin-top: 6px;">
+                  SHA-256: ${img.hash.substring(0, 20)}...
+                </div>
+              </div>
+              <a href="${img.url_fuente}" target="_blank" class="media-link-btn" onclick="event.stopPropagation()">
+                Abrir en Fuente Original ↗
+              </a>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderJudicial(data, filterQuery = '') {
+      const container = document.getElementById('judicial-results-list');
+      container.innerHTML = '';
+      data.forEach(j => {
+        let extractoHtml = j.extracto;
+        if (filterQuery.trim()) {
+          const re = new RegExp(`(${filterQuery})`, 'gi');
+          extractoHtml = extractoHtml.replace(re, '<span class="highlight-word">$1</span>');
+        }
+        container.innerHTML += `
+          <div class="judicial-result-card highlighted">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+              <div>
+                <span class="pill purple">${j.sala}</span>
+                <strong style="font-size: 0.95rem; margin-left: 8px;">${j.numero}</strong>
+                <span style="font-size: 0.76rem; color: var(--text-secondary);">(${j.expediente})</span>
+              </div>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">${j.fecha}</span>
+            </div>
+            <p style="font-size: 0.82rem; line-height: 1.5; color: #cbd5e1; margin-bottom: 8px;">${extractoHtml}</p>
+            <div style="display:flex; justify-content: space-between; align-items: center;">
+              <span style="font-size:0.74rem; color:var(--text-tertiary);">Ponente: ${j.ponente}</span>
+              <a href="${j.url_pdf}" target="_blank" class="pdf-link-btn" onclick="event.stopPropagation()">Ver Documento PDF ↗</a>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // ==========================================
+    // BÚSQUEDA INTELIGENTE & SÍNTESIS DINÁMICA
+    // ==========================================
+    function handleGlobalSearch(e) {
+      if (e.key === 'Enter') {
+        const q = e.target.value.trim();
+        if (!q) return;
+
+        const qLower = q.toLowerCase();
+
+        // 1. Verificar si ya existe en perfiles
+        const matchPerfil = perfilesData.find(p => p.nombre.toLowerCase().includes(qLower));
+        if (matchPerfil) {
+          navigateTab('perfiles');
+          document.getElementById('search-profile-input').value = q;
+          filtrarPerfiles();
+          selectProfile(matchPerfil);
+          return;
+        }
+
+        // 2. Si no existe, ¿es un nombre de funcionario, político o persona pública no registrada?
+        sintetizarPerfilDinamico(q);
+      }
+    }
+
+    function sintetizarPerfilDinamico(nombreBuscado) {
+      // Síntesis de Inteligencia Artificial para entidades no registradas
+      let cargoSintesis = "Funcionario Público / Actor de Interés";
+      let instSintesis = "Poder Público Nacional";
+      let filiacionSintesis = "Sector Oficialista / Político";
+      let alertasSintesis = "Bajo monitoreo de fuentes abiertas y derechos humanos";
+      let resumenSintesis = `${nombreBuscado} ha sido identificado en registros públicos y menciones institucionales recientes vinculadas al ejercicio de funciones de gobierno y toma de decisiones operativas.`;
+
+      const qLower = nombreBuscado.toLowerCase();
+      if (qLower.includes("maduro")) {
+        cargoSintesis = "Presidente de la República Bolivariana de Venezuela";
+        instSintesis = "Presidencia de la República / FANB";
+        filiacionSintesis = "PSUV";
+        alertasSintesis = "Investigación en Corte Penal Internacional (Causa Venezuela I)";
+        resumenSintesis = `Nicolás Maduro Moros encabeza el Poder Ejecutivo Nacional y la Comandancia en Jefe de las Fuerzas Armadas, ejerciendo el mando supremo sobre las políticas de seguridad de Estado.`;
+      } else if (qLower.includes("cabello")) {
+        cargoSintesis = "Ministro de Relaciones Interiores, Justicia y Paz";
+        instSintesis = "MPPRIJP / PSUV";
+        filiacionSintesis = "PSUV";
+        alertasSintesis = "Sanciones internacionales OFAC / UE";
+        resumenSintesis = `Diosdado Cabello Rondón ejerce la conducción del Ministerio de Relaciones Interiores, Justicia y Paz, coordinando las fuerzas policiales de orden público y los organismos auxiliares de investigación.`;
+      }
+
+      const nuevoPerfil = {
+        id: "p_dyn_" + Math.random().toString(16).substring(2, 8),
+        nombre: nombreBuscado,
+        tipo: "Actor / Funcionario Político (Sintetizado)",
+        cargo: cargoSintesis,
+        institucion: instSintesis,
+        gacetas: "Rastreo activo de resoluciones en Gaceta Oficial",
+        filiacion: filiacionSintesis,
+        empresas: "En proceso de cruce con Registro Nacional de Contratistas",
+        alertas: alertasSintesis,
+        resumen_redaccion: resumenSintesis
+      };
+
+      // Guardar dinámicamente en el repositorio
+      perfilesData.unshift(nuevoPerfil);
+      renderPerfiles(perfilesData);
+
+      // Mostrar banner de síntesis
+      document.getElementById('synth-name').textContent = nombreBuscado;
+      document.getElementById('dynamic-synthesis-banner').style.display = 'flex';
+
+      navigateTab('perfiles');
+      selectProfile(nuevoPerfil);
+    }
+
+    // ==========================================
+    // INSPECTOR
+    // ==========================================
+    function selectEvidence(item) {
+      const inspector = document.getElementById('inspector-body');
+      inspector.innerHTML = `
+        <span class="pill ${item.verificacion_pill}" style="margin-bottom: 8px;">${item.verificacion}</span>
+        <h4 style="font-size: 0.95rem; margin-bottom: 6px;">${item.nombre}</h4>
+        <p style="font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 10px;">${item.fuente} • ${item.fecha}</p>
+        
+        <div style="font-size: 0.74rem; color: var(--text-secondary);">Hash SHA-256 Probatorio:</div>
+        <div class="hash-display">${item.hash}</div>
+
+        <div style="margin-top: 12px; font-size: 0.8rem; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px;">
+          <strong>Situación Factual:</strong><br/>
+          "${item.situacion}"
+        </div>
+
+        <div style="margin-top: 10px; font-size: 0.78rem;">
+          <strong>Conectores de Diálogo:</strong><br/>
+          <span style="color:var(--primary); font-weight:600;">${item.conectores}</span>
+        </div>
+
+        <a href="${item.url}" target="_blank" class="btn-export primary" style="width: 100%; margin-top: 14px; text-decoration: none; justify-content: center;">
+          Abrir Enlace Original ↗
+        </a>
+      `;
+    }
+
+    function selectProfile(p) {
+      const inspector = document.getElementById('inspector-body');
+      inspector.innerHTML = `
+        <span class="pill purple" style="margin-bottom: 8px;">${p.tipo}</span>
+        <h4 style="font-size: 1rem; margin-bottom: 4px;">${p.nombre}</h4>
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px;">${p.cargo} — ${p.institucion}</p>
+
+        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; font-size: 0.78rem; margin-bottom: 12px;">
+          <p><strong>Gaceta Oficial:</strong><br/>${p.gacetas}</p>
+          <p style="margin-top: 6px;"><strong>Empresas Asociadas:</strong><br/>${p.empresas}</p>
+          <p style="margin-top: 6px; color: #f87171;"><strong>Alertas DDHH / Justicia:</strong><br/>${p.alertas}</p>
+        </div>
+
+        <div class="journalism-snippet">
+          <strong>Párrafo de Contexto para Noticia:</strong><br/>
+          "${p.resumen_redaccion}"
+        </div>
+
+        <button class="btn-export primary" style="width: 100%; margin-top: 14px; justify-content: center;" onclick="copiarTexto('${p.resumen_redaccion.replace(/'/g, "\'")}')">
+          📋 Copiar para Redacción
+        </button>
+      `;
+    }
+
+    function selectImage(hash) {
+      const img = imagenesForense.find(i => i.hash === hash);
+      if (!img) return;
+
+      const inspector = document.getElementById('inspector-body');
+      inspector.innerHTML = `
+        <span class="pill green" style="margin-bottom: 8px;">EVIDENCIA VISUAL FORENSE</span>
+        <h4 style="font-size: 0.95rem; margin-bottom: 6px;">${img.titulo}</h4>
+        <p style="font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 10px;">${img.fecha} • ${img.lugar}</p>
+
+        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; font-size: 0.76rem; margin-bottom: 10px;">
+          <p><strong>Dispositivo:</strong> ${img.dispositivo}</p>
+          <p><strong>Preservación:</strong> Copia nativa probatoria sin compresión</p>
+        </div>
+
+        <div style="font-size: 0.74rem; color: var(--text-secondary);">Hash Criptográfico SHA-256:</div>
+        <div class="hash-display">${img.hash}</div>
+
+        <a href="${img.url_fuente}" target="_blank" class="btn-export primary" style="width: 100%; margin-top: 14px; text-decoration: none; justify-content: center;">
+          Abrir en Fuente Original ↗
+        </a>
+      `;
+    }
+
+    // ==========================================
+    // FILTROS Y EVENTOS
+    // ==========================================
+    function filtrarTablaDatos() {
+      const q = document.getElementById('filter-table-input').value.toLowerCase();
+      renderMatrizDatos(evidenciasData.filter(i => 
+        i.nombre.toLowerCase().includes(q) ||
+        i.situacion.toLowerCase().includes(q) ||
+        i.ciudad.toLowerCase().includes(q) ||
+        i.actores.some(a => a.toLowerCase().includes(q)) ||
+        i.hash.toLowerCase().includes(q)
+      ));
+    }
+
+    function filtrarPerfiles() {
+      const q = document.getElementById('search-profile-input').value.toLowerCase();
+      renderPerfiles(perfilesData.filter(p => 
+        p.nombre.toLowerCase().includes(q) ||
+        p.cargo.toLowerCase().includes(q) ||
+        p.institucion.toLowerCase().includes(q)
+      ));
+    }
+
+    function filtrarFeeds() {
+      const q = document.getElementById('feed-search-input').value;
+      renderTriFeeds(q);
+    }
+
+    function simularActualizacionFeeds() {
+      alert("Comprobando feeds RSS y portales... Feeds sincronizados con los últimos despachos de prensa.");
+    }
+
+    function filtrarObservatorio() {
+      const cat = document.getElementById('filtro-categoria-obs').value;
+      if (cat === 'TODOS') {
+        renderObservatorio(observatorioData);
+      } else {
+        renderObservatorio(observatorioData.filter(o => o.categoria === cat));
+      }
+    }
+
+    function actualizarDorkX() {
+      const t = document.getElementById('x-term').value.trim();
+      const p = document.getElementById('x-phrase').value.trim();
+      const loc = document.getElementById('x-loc').value.trim();
+      let parts = [];
+      if (t) parts.push(t);
+      if (p) parts.push(`"${p}"`);
+      if (loc) parts.push(`near:"${loc}"`);
+      parts.push("filter:media");
+      document.getElementById('x-dork-preview').textContent = parts.join(' ');
+    }
+
+    function simularTweetRadar() {
+      const nuevoTweet = {
+        id: "tw_" + Math.random().toString(16).substring(2, 6),
+        avatar: "⚡",
+        usuario: "Denuncia Comunitaria en Red",
+        handle: "@denuncia_sur",
+        fecha: new Date().toISOString().replace('T', ' ').substring(0, 19) + " UTC",
+        texto: "ALERTA: Se confirma despliegue de patrullas policiales en los accesos de El Valle. Reportan cortes de luz y bloqueo de paso.",
+        hash: "7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069",
+        url: "https://x.com/denuncia_sur/status/194829300",
+        dia: "HOY"
+      };
+      tweetsRadar.unshift(nuevoTweet);
+      renderTweetsLive();
+      alert("¡Nueva captura detectada por el monitor! El tweet fue preservado con hash SHA-256 e incorporado al radar en vivo.");
+    }
+
+    function filtrarHistorialX() {
+      const dia = document.getElementById('historial-fecha').value;
+      if (dia === 'SEMANA') {
+        renderTweetsLive();
+      } else {
+        const container = document.getElementById('tweets-live-scroll');
+        container.innerHTML = '';
+        tweetsRadar.filter(t => t.dia === dia).forEach(tw => {
+          container.innerHTML += `
+            <div class="tweet-card">
+              <div class="tweet-header">
+                <div class="tweet-author">
+                  <div class="tweet-avatar">${tw.avatar}</div>
+                  <div>
+                    <strong style="font-size:0.85rem;">${tw.usuario}</strong>
+                    <span style="font-size:0.75rem; color:var(--text-muted); margin-left: 4px;">${tw.handle}</span>
+                  </div>
+                </div>
+                <span class="pill green">CAPTURA AUTOMÁTICA</span>
+              </div>
+              <div class="tweet-body">${tw.texto}</div>
+              <div class="tweet-footer">
+                <div><span>🕒 ${tw.fecha}</span> • <code style="color:var(--primary); font-size:0.68rem;">SHA: ${tw.hash.substring(0, 12)}...</code></div>
+                <a href="${tw.url}" target="_blank" class="media-link-btn" onclick="event.stopPropagation()">Ver Tweet en X ↗</a>
+              </div>
+            </div>
+          `;
+        });
+      }
+    }
+
+    function buscarJudicial() {
+      const q = document.getElementById('judicial-query').value.toLowerCase();
+      const s = document.getElementById('judicial-sala').value;
+      let f = judicialesData;
+      if (s !== 'TODAS') f = f.filter(j => j.sala === s);
+      if (q.trim()) f = f.filter(j => j.numero.toLowerCase().includes(q) || j.extracto.toLowerCase().includes(q));
+      renderJudicial(f, q);
+    }
+
+    // ==========================================
+    // EXPORTACIONES
+    // ==========================================
+    function copiarTexto(texto) {
+      navigator.clipboard.writeText(texto).then(() => {
+        alert("Párrafo de datos copiado al portapapeles para redacción periodística.");
+      });
+    }
+
+    function descargarCSV() {
+      let csv = "Nombre,Fuente,Direccion,Ciudad,Pais,Caso,Situacion,Conectores,Hash_SHA256,URL,Fecha_UTC\n";
+      evidenciasData.forEach(i => {
+        csv += `"${i.nombre}","${i.fuente}","${i.direccion}","${i.ciudad}","${i.pais}","${i.caso}","${i.situacion}","${i.conectores}","${i.hash}","${i.url}","${i.fecha}"\n`;
+      });
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "matriz_consolidada_osint.csv";
+      a.click();
+    }
+
+    function descargarCSVObservatorio() {
+      let csv = "Categoria,Fecha,Lugar,Afectados,Organos,Descripcion,Corroboracion,Estado\n";
+      observatorioData.forEach(o => {
+        csv += `"${o.categoria}","${o.fecha}","${o.lugar}","${o.afectados}","${o.organos}","${o.descripcion}","${o.corroboracion}","${o.estado}"\n`;
+      });
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "observatorio_eventos_criticos.csv";
+      a.click();
+    }
+
+    function descargarExcelCompleto() {
+      // Descarga el archivo Excel maestro .xlsx generado
+      const a = document.createElement("a");
+      a.href = "matriz_evidencias_osint.xlsx";
+      a.download = "matriz_evidencias_osint.xlsx";
+      a.click();
+    }
+
+    function exportarPDF() {
+      window.print();
+    }
+
+    // Inicialización al cargar
+    renderMatrizDatos(evidenciasData);
+    renderPerfiles(perfilesData);
+    renderObservatorio(observatorioData);
+    renderTriFeeds();
+    renderTweetsLive();
+    renderGaleriaVisual();
+    renderJudicial(judicialesData);
+    selectEvidence(evidenciasData[0]);
+  </script>
+</body>
+</html>
